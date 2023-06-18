@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Store;
+use App\Utils\CoordinateHelper;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
+use Kutia\Larafirebase\Facades\Larafirebase;
 
 class StoreController extends Controller
 {
@@ -96,6 +98,23 @@ class StoreController extends Controller
             'longitude' => $request->longitude,
             'latitude' => $request->latitude,
         ]);
+
+        $fcm_tokens = [];
+
+        foreach ($store->subscribers as $subscriber) {
+            if (!$subscriber->latitude) { continue; }
+            $distance = CoordinateHelper::computeDistance($store->latitude, $store->longitude, $subscriber->latitude, $subscriber->longitude, "K");
+
+            if ($distance < 2) {
+                $fcm_tokens[] = $subscriber->fcm_token;
+            }
+        }
+
+        Larafirebase::withTitle('Lalaco')
+        ->withBody($store->store_name . ' is nearby. Check the menu and enjoy eating! 👌')
+        ->sendNotification($fcm_tokens);
+
+
 
         return [
             'store' => $store

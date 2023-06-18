@@ -9,6 +9,7 @@ use App\Http\Controllers\RatingsController;
 use App\Http\Controllers\SchedulesController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SubscriptionsController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,11 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum']);
+
+
+Route::put('/users/update_location', [UsersController::class, 'updateLocation'])->middleware(['auth:sanctum']);
+Route::put('/users/update_fcm_token', [UsersController::class, 'updateFcmToken'])->middleware(['auth:sanctum']);
+Route::get('/users/send_notification', [UsersController::class, 'sendNotification']);
 
 Route::post('/stores', [StoreController::class, 'store']);
 Route::put('/stores/{store_id}', [StoreController::class, 'update']);

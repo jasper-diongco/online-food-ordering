@@ -21,7 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'phone_number'
+        'phone_number',
+        'fcm_token',
+        'longitude',
+        'latitude',
+        'user_type'
     ];
 
     /**
