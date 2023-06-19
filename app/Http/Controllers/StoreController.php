@@ -100,6 +100,7 @@ class StoreController extends Controller
         ]);
 
         $fcm_tokens = [];
+        $subscribers = [];
 
         foreach ($store->subscribers as $subscriber) {
             if (!$subscriber->latitude) { continue; }
@@ -107,6 +108,7 @@ class StoreController extends Controller
 
             if ($distance < 2) {
                 $fcm_tokens[] = $subscriber->fcm_token;
+                $subscribers[] = $subscriber;
             }
         }
 
@@ -117,7 +119,8 @@ class StoreController extends Controller
 
 
         return [
-            'store' => $store
+            'store' => $store,
+            'subscribers' => $subscribers
         ];
     }
 }
