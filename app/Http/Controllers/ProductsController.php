@@ -130,9 +130,27 @@ class ProductsController extends Controller
             'store_id' => 'required'
         ]);
 
+        $image_name = '';
+
+        if ($request->hasFile('image')) {
+            $request->validate([
+                'image' => 'image|max:10000'
+            ]);
+
+            $image_name = uniqid() . '_' . pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
+            $image = Image::make($request->image);
+            $image->fit(1200, 1200);
+            $image->save(public_path('storage/uploads/'. $image_name .'.png'), 90, 'png');
+            
+            $image_name = $image_name .'.png';
+        }
+
         $product = Product::findOrFail($product_id);
 
-        $product->update($request->all());
+        $product->update([
+            ...$request->all(),
+            'image' => $image_name
+        ]);
 
         return [
             'product' => $product

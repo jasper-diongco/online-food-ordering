@@ -77,9 +77,27 @@ class StoreController extends Controller
             'latitude' => 'required'
         ]);
 
+        $image_name = '';
+
+        if ($request->hasFile('image')) {
+            $request->validate([
+                'image' => 'image|max:10000'
+            ]);
+
+            $image_name = uniqid() . '_' . pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
+            $image = Image::make($request->image);
+            $image->fit(1200, 1200);
+            $image->save(public_path('storage/uploads/'. $image_name .'.png'), 90, 'png');
+            
+            $image_name = $image_name .'.png';
+        }
+
         $store = Store::findOrFail($store_id);
 
-        $store->update($request->all());
+        $store->update([
+            ...$request->all(),
+            'image' => $image_name
+        ]);
 
         return [
             'store' => $store
