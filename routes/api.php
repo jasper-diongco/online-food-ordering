@@ -29,6 +29,7 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum']);
 
 
+Route::post('/users/upload_image', [UsersController::class, 'uploadImage'])->middleware(['auth:sanctum']);
 Route::put('/users/update_location', [UsersController::class, 'updateLocation'])->middleware(['auth:sanctum']);
 Route::put('/users/update_fcm_token', [UsersController::class, 'updateFcmToken'])->middleware(['auth:sanctum']);
 Route::get('/users/send_notification', [UsersController::class, 'sendNotification']);
