@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BannersController;
 use App\Http\Controllers\CartItemsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\OrdersController;
@@ -79,6 +80,8 @@ Route::post('/orders', [OrdersController::class, 'store']);
 Route::get('/orders/vendor', [OrdersController::class, 'indexOfVendor']);
 Route::get('/orders/customer', [OrdersController::class, 'indexOfCustomer']);
 Route::put('/orders/{order_id}', [OrdersController::class, 'updateStatus']);
+
+Route::get('/banners', [BannersController::class, 'index']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

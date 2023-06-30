@@ -11,7 +11,7 @@ class AuthController extends Controller
     public function register(Request $request) {
         $request->validate([
             'name' => 'required',
-            'phone_number' => 'required',
+            // 'phone_number' => 'required',
             'email' => 'required|string|unique:users,email',
             'password' => 'required|string|min:6',
             'user_type' => 'required'
@@ -56,7 +56,7 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request) {
-        auth()->user()->tokens()->delete();
+        // auth()->user()->tokens()->delete();
 
         return [
             'message' => 'Logged out'
