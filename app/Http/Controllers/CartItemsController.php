@@ -76,4 +76,13 @@ class CartItemsController extends Controller
             'message' => 'Cart Item Deleted'
         ];
     }
+
+    public function deleteAll($store_id)
+    {
+        CartItem::where('store_id', $store_id)->delete();
+
+        return [
+            'message' => 'All Cart Items Deleted'
+        ];
+    }
 }

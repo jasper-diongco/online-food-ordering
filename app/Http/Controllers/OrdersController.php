@@ -33,6 +33,7 @@ class OrdersController extends Controller
             ->with('order_details')
             ->with('user')
             ->with('store')
+            // ->with('product')
             ->get();
 
         return [
@@ -55,7 +56,7 @@ class OrdersController extends Controller
 
         $note = $request->note ?? '';
 
-        DB::transaction();
+        // DB::transaction();
 
         $order = Order::create([
             ...$request->all(),

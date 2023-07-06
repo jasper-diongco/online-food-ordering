@@ -12,7 +12,7 @@ class Order extends Model
     public $guarded = [];
 
     public function order_details() {
-        return $this->hasMany(OrderDetail::class);
+        return $this->hasMany(OrderDetail::class)->with('product');
     }
 
     public function user() {
@@ -22,4 +22,5 @@ class Order extends Model
     public function store() {
         return $this->belongsTo(Store::class);
     }
+
 }
