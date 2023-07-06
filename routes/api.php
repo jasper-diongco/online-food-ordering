@@ -27,8 +27,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
+// Route::post('/forgot_password', [ForgotPasswordController::class, 'store']);
+// Route::patch('/forgot_password/update', [ForgotPasswordController::class, 'updatePassword']);
 Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum']);
-
+Route::post('/update/{id}', [AuthController::class, 'update'])->middleware(['auth:sanctum']);
+Route::post('/update/{id}/update_password', [AuthController::class, 'updatePassword'])->middleware(['auth:sanctum']);
 
 Route::post('/users/upload_image', [UsersController::class, 'uploadImage'])->middleware(['auth:sanctum']);
 Route::put('/users/update_location', [UsersController::class, 'updateLocation'])->middleware(['auth:sanctum']);
