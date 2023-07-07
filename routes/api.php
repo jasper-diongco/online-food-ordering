@@ -33,7 +33,7 @@ Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware(['aut
 Route::post('/update/{id}', [AuthController::class, 'update'])->middleware(['auth:sanctum']);
 Route::post('/update/{id}/update_password', [AuthController::class, 'updatePassword'])->middleware(['auth:sanctum']);
 
-Route::post('/users/upload_image', [UsersController::class, 'uploadImage'])->middleware(['auth:sanctum']);
+Route::post('/users/{user_id}/upload_image', [UsersController::class, 'uploadImage']);
 Route::put('/users/update_location', [UsersController::class, 'updateLocation'])->middleware(['auth:sanctum']);
 Route::put('/users/update_fcm_token', [UsersController::class, 'updateFcmToken'])->middleware(['auth:sanctum']);
 Route::get('/users/send_notification', [UsersController::class, 'sendNotification']);
