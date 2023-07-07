@@ -55,6 +55,42 @@ class AuthController extends Controller
         return response($response, 200);
     }
 
+    public function update(Request $request, $id)
+    {
+        $user = User::find($id);
+
+        $user->update([
+            ...$request->all(),
+        ]);
+        return $user;
+    }
+
+    public function updatePassword(Request $request, $id)
+    {
+        $fields = $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:6'
+        ]);
+
+        $user = User::findOrFail($id);
+
+        // if ($id != auth()->user()->id) {
+        //     abort(403, 'Invalid');
+        // }
+
+        if (!Hash::check($fields['current_password'],  $user->password)) {
+            abort(422, 'Current Password is Invalid');
+        }
+
+        $user->password = Hash::make($fields['new_password']);
+
+        $user->update();
+
+        return request()->json([
+            'message' => 'Password Updated'
+        ]);
+    }
+
     public function logout(Request $request) {
         // auth()->user()->tokens()->delete();
 
