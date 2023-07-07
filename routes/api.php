@@ -38,6 +38,7 @@ Route::get('/users/send_notification', [UsersController::class, 'sendNotificatio
 Route::post('/stores', [StoreController::class, 'store']);
 Route::put('/stores/{store_id}', [StoreController::class, 'update']);
 Route::put('/stores/{store_id}/update_location', [StoreController::class, 'updateLocation']);
+Route::get('/stores/by_user_id/{user_id}', [StoreController::class, 'showByUserId']);
 Route::get('/stores/{store_id}', [StoreController::class, 'show']);
 Route::get('/stores', [StoreController::class, 'index']);
 

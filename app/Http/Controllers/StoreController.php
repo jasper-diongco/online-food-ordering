@@ -14,12 +14,10 @@ class StoreController extends Controller
         $search = $request->search ?? '';
         
         if ($search !== '') {
-            $stores = Store::where('store_name', 'LIKE', '%' . $search . '%')->get();
+            $stores = Store::where('store_name', 'LIKE', '%' . $search . '%')->where('is_active', 1)->get();
         } else {
-            $stores = Store::all();
+            $stores = Store::where('is_active', 1)->get();
         }
-
-        
 
         return [
             'stores' => $stores
@@ -28,6 +26,15 @@ class StoreController extends Controller
 
     public function show($store_id) {
         $store = Store::findOrFail($store_id);
+
+        return [
+            'store' => $store
+        ];
+    }
+
+
+    public function showByUserId($user_id) {
+        $store = Store::where('user_id', $user_id)->first();
 
         return [
             'store' => $store
@@ -96,7 +103,8 @@ class StoreController extends Controller
 
         $store->update([
             ...$request->all(),
-            'image' => $image_name
+            'image' => $image_name,
+            'is_active' => 1
         ]);
 
         return [
