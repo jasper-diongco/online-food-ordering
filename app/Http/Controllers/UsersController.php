@@ -37,7 +37,7 @@ class UsersController extends Controller
             'fcm_token' => 'required'
         ]);
 
-        $request->user()->update(['fcm_token' => $request->token]);
+        $request->user()->update(['fcm_token' => $request->fcm_token]);
 
         return [
             'message' => 'FCM Token Updated'
