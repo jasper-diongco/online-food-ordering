@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BannersController;
 use App\Http\Controllers\CartItemsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\OrderDetailController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\RatingsController;
@@ -86,6 +87,8 @@ Route::post('/orders', [OrdersController::class, 'store']);
 Route::get('/orders/vendor', [OrdersController::class, 'indexOfVendor']);
 Route::get('/orders/customer', [OrdersController::class, 'indexOfCustomer']);
 Route::put('/orders/{order_id}', [OrdersController::class, 'updateStatus']);
+
+Route::get('/order_details/order', [OrderDetailController::class, 'indexOfOrder']);
 
 Route::get('/banners', [BannersController::class, 'index']);
 
