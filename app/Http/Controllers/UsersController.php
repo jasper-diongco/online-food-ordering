@@ -66,7 +66,7 @@ class UsersController extends Controller
         Larafirebase::withTitle('LaraFirebase')
             ->withBody('Manok Man is now open')
             ->sendNotification([
-                'fqMHr5KjSLWg7K9ka8m-eq:APA91bFHIOtnO49mQP8lxor8o-6CVw4TpekbQVwQE8oiyi2jkOlPEsuIspn2Eua6_ELUkVVCKQJmt0h0cqVSoUoQceaH-foYSJHhwBc2VHC5u-ZLHffm-RUfwJuHlBdX6vMnYe36lFkr'
+                'd9kD_VwcSiSowN-iIGPMix:APA91bEdwoto3l5cO50fbIXYK_WTgu2GjCxx6rR3C3_Y9f_gjOCdJ7F6gqdzfwLQoMwqHK5bPOGEYpXgug0sRsJqcNnFHW3Dac352OYot3JCBOq-R7tWtIZFJA_HMg8bCoxLYkxOe7LP'
             ]);
     }
 }

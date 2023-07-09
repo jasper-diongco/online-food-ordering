@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Kutia\Larafirebase\Facades\Larafirebase;
 
 class OrdersController extends Controller
 {
@@ -90,6 +91,12 @@ class OrdersController extends Controller
 
         $order->status = $request->status;
         $order->update();
+
+        Larafirebase::withTitle($order->store->store_name)
+            ->withBody('Your order is now ' . $order->status)
+            ->sendNotification([
+                $order->user->fcm_token
+            ]);
 
         return [
             'order' => $order
