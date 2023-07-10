@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BannersController;
 use App\Http\Controllers\CartItemsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\OrderDetailController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductsController;
@@ -91,6 +92,8 @@ Route::put('/orders/{order_id}', [OrdersController::class, 'updateStatus']);
 Route::get('/order_details/order', [OrderDetailController::class, 'indexOfOrder']);
 
 Route::get('/banners', [BannersController::class, 'index']);
+
+Route::get('/notifications', [NotificationsController::class, 'index'])->middleware(['auth:sanctum']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
