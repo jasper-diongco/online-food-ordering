@@ -13,4 +13,12 @@ class NotificationsController extends Controller
             'notifications' => $notifications
         ];
     }
+
+    public function readNotifications(Request $request) {
+        $request->user()->unreadNotifications->markAsRead();
+
+        return [
+            'message' => 'Notifications Read'
+        ];
+    }
 }

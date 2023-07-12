@@ -9,6 +9,14 @@ use Intervention\Image\Facades\Image;
 
 class UsersController extends Controller
 {
+    public function show($user_id) {
+        $user = User::findOrFail($user_id);
+
+        return [
+            'user' => $user
+        ];
+    }
+
     public function uploadImage(Request $request, $user_id)
     {
         $request->validate([

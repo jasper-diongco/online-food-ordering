@@ -39,6 +39,7 @@ Route::post('/users/{user_id}/upload_image', [UsersController::class, 'uploadIma
 Route::put('/users/update_location', [UsersController::class, 'updateLocation'])->middleware(['auth:sanctum']);
 Route::put('/users/update_fcm_token', [UsersController::class, 'updateFcmToken'])->middleware(['auth:sanctum']);
 Route::get('/users/send_notification', [UsersController::class, 'sendNotification']);
+Route::get('/users/{user_id}', [UsersController::class, 'show']);
 
 Route::post('/stores', [StoreController::class, 'store']);
 Route::put('/stores/{store_id}', [StoreController::class, 'update']);
@@ -94,6 +95,7 @@ Route::get('/order_details/order', [OrderDetailController::class, 'indexOfOrder'
 Route::get('/banners', [BannersController::class, 'index']);
 
 Route::get('/notifications', [NotificationsController::class, 'index'])->middleware(['auth:sanctum']);
+Route::post('/notifications/read_notifications', [NotificationsController::class, 'readNotifications'])->middleware(['auth:sanctum']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
