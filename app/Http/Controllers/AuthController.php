@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $request->validate([
             'name' => 'required',
             // 'phone_number' => 'required',
@@ -16,7 +18,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
             'user_type' => 'required'
         ]);
-
+    
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -24,17 +26,31 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'user_type' => $request->user_type
         ]);
-
+    
+        if ($request->user_type === 'Vendor') {
+            Store::create([
+                'store_name' => '',
+                'image' => '',
+                'store_description' => '',
+                'location_description' => '',
+                'longitude' => '',
+                'latitude' => '',
+                'user_id' => $user->id, // Use the ID of the created user
+            ]);
+        }
+    
         // $token = $user->createToken('app_token')->plainTextToken;
-
+    
         $response = [
             'user' => $user
         ];
-
+    
         return response($response, 201);
     }
+    
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $user = User::orWhere('email', $request->email)
             ->orWhere('phone_number', $request->phone_number)
             ->first();
@@ -78,7 +94,7 @@ class AuthController extends Controller
         //     abort(403, 'Invalid');
         // }
 
-        if (!Hash::check($fields['current_password'],  $user->password)) {
+        if (!Hash::check($fields['current_password'], $user->password)) {
             abort(422, 'Current Password is Invalid');
         }
 
@@ -91,7 +107,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         // auth()->user()->tokens()->delete();
 
         return [

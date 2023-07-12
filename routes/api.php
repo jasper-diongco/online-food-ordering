@@ -34,13 +34,13 @@ Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware(['aut
 Route::post('/update/{id}', [AuthController::class, 'update'])->middleware(['auth:sanctum']);
 Route::post('/update/{id}/update_password', [AuthController::class, 'updatePassword'])->middleware(['auth:sanctum']);
 
-Route::post('/users/{user_id}/upload_image', [UsersController::class, 'uploadImage']);
+Route::post('/users/upload_image', [UsersController::class, 'uploadImage'])->middleware(['auth:sanctum']);
 Route::put('/users/update_location', [UsersController::class, 'updateLocation'])->middleware(['auth:sanctum']);
 Route::put('/users/update_fcm_token', [UsersController::class, 'updateFcmToken'])->middleware(['auth:sanctum']);
 Route::get('/users/send_notification', [UsersController::class, 'sendNotification']);
 
 Route::post('/stores', [StoreController::class, 'store']);
-Route::put('/stores/{store_id}', [StoreController::class, 'update']);
+Route::post('/stores/{store_id}', [StoreController::class, 'update']);
 Route::put('/stores/{store_id}/update_location', [StoreController::class, 'updateLocation']);
 Route::get('/stores/by_user_id/{user_id}', [StoreController::class, 'showByUserId']);
 Route::get('/stores/{store_id}', [StoreController::class, 'show']);
