@@ -14,4 +14,8 @@ class Store extends Model
     public function subscribers() {
         return $this->belongsToMany(User::class, 'subscriptions', 'store_id', 'user_id');
     }
+
+    public function schedules() {
+        return $this->hasMany(Schedule::class);
+    }
 }

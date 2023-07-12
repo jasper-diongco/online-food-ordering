@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BannersController;
 use App\Http\Controllers\CartItemsController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\OrderDetailController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductsController;
@@ -38,6 +39,7 @@ Route::post('/users/upload_image', [UsersController::class, 'uploadImage'])->mid
 Route::put('/users/update_location', [UsersController::class, 'updateLocation'])->middleware(['auth:sanctum']);
 Route::put('/users/update_fcm_token', [UsersController::class, 'updateFcmToken'])->middleware(['auth:sanctum']);
 Route::get('/users/send_notification', [UsersController::class, 'sendNotification']);
+Route::get('/users/{user_id}', [UsersController::class, 'show']);
 
 Route::post('/stores', [StoreController::class, 'store']);
 Route::post('/stores/{store_id}', [StoreController::class, 'update']);
@@ -91,6 +93,9 @@ Route::put('/orders/{order_id}', [OrdersController::class, 'updateStatus']);
 Route::get('/order_details/order', [OrderDetailController::class, 'indexOfOrder']);
 
 Route::get('/banners', [BannersController::class, 'index']);
+
+Route::get('/notifications', [NotificationsController::class, 'index'])->middleware(['auth:sanctum']);
+Route::post('/notifications/read_notifications', [NotificationsController::class, 'readNotifications'])->middleware(['auth:sanctum']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

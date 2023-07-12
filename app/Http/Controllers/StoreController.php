@@ -14,9 +14,9 @@ class StoreController extends Controller
         $search = $request->search ?? '';
         
         if ($search !== '') {
-            $stores = Store::where('store_name', 'LIKE', '%' . $search . '%')->where('is_active', 1)->get();
+            $stores = Store::where('store_name', 'LIKE', '%' . $search . '%')->where('is_active', 1)->with('schedules')->get();
         } else {
-            $stores = Store::where('is_active', 1)->get();
+            $stores = Store::where('is_active', 1)->with('schedules')->get();
         }
 
         return [
@@ -25,7 +25,9 @@ class StoreController extends Controller
     }
 
     public function show($store_id) {
-        $store = Store::findOrFail($store_id);
+        $store = Store::where('id', $store_id)
+            ->with('schedules')
+            ->first();
 
         return [
             'store' => $store
@@ -34,7 +36,7 @@ class StoreController extends Controller
 
 
     public function showByUserId($user_id) {
-        $store = Store::where('user_id', $user_id)->first();
+        $store = Store::where('user_id', $user_id)->with('schedules')->first();
 
         return [
             'store' => $store

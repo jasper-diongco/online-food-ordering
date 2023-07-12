@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Notifications\OrderStatusUpdateNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Kutia\Larafirebase\Facades\Larafirebase;
 
 class OrdersController extends Controller
@@ -97,6 +99,8 @@ class OrdersController extends Controller
             ->sendNotification([
                 $order->user->fcm_token
             ]);
+
+        Notification::sendNow([$order->user], new OrderStatusUpdateNotification($order));
 
         return [
             'order' => $order
