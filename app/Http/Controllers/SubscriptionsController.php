@@ -21,6 +21,17 @@ class SubscriptionsController extends Controller
         ];
     }
 
+    public function countOfVendor(Request $request) {
+        $store_id = $request->store_id ?? '';
+
+        $subscription_count = Subscription::where('store_id', $store_id)
+            ->count();
+
+        return [
+            'subscription_count' => $subscription_count
+        ];
+    }
+
     public function indexOfCustomer(Request $request) {
         $user_id = $request->user_id ?? '';
 

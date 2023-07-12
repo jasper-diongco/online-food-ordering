@@ -65,6 +65,7 @@ Route::delete('/products/{product_id}', [ProductsController::class, 'destroy']);
 
 Route::get('/subscriptions/customer', [SubscriptionsController::class, 'indexOfCustomer']);
 Route::get('/subscriptions/vendor', [SubscriptionsController::class, 'indexOfVendor']);
+Route::get('/subscriptions/vendor/count', [SubscriptionsController::class, 'countOfVendor']);
 Route::post('/subscriptions', [SubscriptionsController::class, 'store']);
 Route::delete('/subscriptions', [SubscriptionsController::class, 'destroy']);
 
