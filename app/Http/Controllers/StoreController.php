@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Store;
+use App\Models\Subscription;
 use App\Utils\CoordinateHelper;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
@@ -10,13 +11,21 @@ use Kutia\Larafirebase\Facades\Larafirebase;
 
 class StoreController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $search = $request->search ?? '';
-        
+
         if ($search !== '') {
             $stores = Store::where('store_name', 'LIKE', '%' . $search . '%')->where('is_active', 1)->with('schedules')->get();
         } else {
             $stores = Store::where('is_active', 1)->with('schedules')->get();
+        }
+
+        foreach ($stores as $store) {
+            $subscription_count = Subscription::where('store_id', $store->id)
+                ->count();
+
+            $store->subscription_count = $subscription_count;
         }
 
         return [
@@ -24,10 +33,16 @@ class StoreController extends Controller
         ];
     }
 
-    public function show($store_id) {
+    public function show($store_id)
+    {
         $store = Store::where('id', $store_id)
             ->with('schedules')
             ->first();
+
+        $subscription_count = Subscription::where('store_id', $store_id)
+            ->count();
+
+        $store->subscription_count = $subscription_count;
 
         return [
             'store' => $store
@@ -35,7 +50,8 @@ class StoreController extends Controller
     }
 
 
-    public function showByUserId($user_id) {
+    public function showByUserId($user_id)
+    {
         $store = Store::where('user_id', $user_id)->with('schedules')->first();
 
         return [
@@ -43,7 +59,8 @@ class StoreController extends Controller
         ];
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $request->validate([
             'store_name' => 'required',
             'store_description' => 'required',
@@ -62,9 +79,9 @@ class StoreController extends Controller
             $image_name = uniqid() . '_' . pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
             $image = Image::make($request->image);
             $image->fit(1200, 1200);
-            $image->save(public_path('storage/uploads/'. $image_name .'.png'), 90, 'png');
-            
-            $image_name = $image_name .'.png';
+            $image->save(public_path('storage/uploads/' . $image_name . '.png'), 90, 'png');
+
+            $image_name = $image_name . '.png';
         }
 
         $store = Store::create([
@@ -77,7 +94,8 @@ class StoreController extends Controller
         ];
     }
 
-    public function update(Request $request, $store_id) {
+    public function update(Request $request, $store_id)
+    {
         $request->validate([
             'store_name' => 'required',
             'store_description' => 'required',
@@ -96,9 +114,9 @@ class StoreController extends Controller
             $image_name = uniqid() . '_' . pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
             $image = Image::make($request->image);
             $image->fit(1200, 1200);
-            $image->save(public_path('storage/uploads/'. $image_name .'.png'), 90, 'png');
-            
-            $image_name = $image_name .'.png';
+            $image->save(public_path('storage/uploads/' . $image_name . '.png'), 90, 'png');
+
+            $image_name = $image_name . '.png';
         }
 
         $store = Store::findOrFail($store_id);
@@ -114,7 +132,8 @@ class StoreController extends Controller
         ];
     }
 
-    public function updateLocation(Request $request, $store_id) {
+    public function updateLocation(Request $request, $store_id)
+    {
         $request->validate([
             'longitude' => 'required',
             'latitude' => 'required'
@@ -131,7 +150,9 @@ class StoreController extends Controller
         $subscribers = [];
 
         foreach ($store->subscribers as $subscriber) {
-            if (!$subscriber->latitude) { continue; }
+            if (!$subscriber->latitude) {
+                continue;
+            }
             $distance = CoordinateHelper::computeDistance($store->latitude, $store->longitude, $subscriber->latitude, $subscriber->longitude, "K");
 
             if ($distance < 2) {
@@ -141,8 +162,8 @@ class StoreController extends Controller
         }
 
         Larafirebase::withTitle('Lalaco')
-        ->withBody($store->store_name . ' is nearby. Check the menu and enjoy eating! 👌')
-        ->sendNotification($fcm_tokens);
+            ->withBody($store->store_name . ' is nearby. Check the menu and enjoy eating! 👌')
+            ->sendNotification($fcm_tokens);
 
 
 
