@@ -14,6 +14,7 @@ class StoreController extends Controller
     public function index(Request $request)
     {
         $search = $request->search ?? '';
+        $user_id = $request->user_id ?? '';
 
         if ($search !== '') {
             $stores = Store::where('store_name', 'LIKE', '%' . $search . '%')->where('is_active', 1)->with('schedules')->get();
@@ -24,6 +25,12 @@ class StoreController extends Controller
         foreach ($stores as $store) {
             $subscription_count = Subscription::where('store_id', $store->id)
                 ->count();
+            
+            $is_user_subscribed = Subscription::where('store_id', $store->id)
+                ->where('user_id', $user_id)
+                ->count();
+
+            $store->is_user_subscribed = $is_user_subscribed;
 
             $store->subscription_count = $subscription_count;
         }
@@ -41,8 +48,13 @@ class StoreController extends Controller
 
         $subscription_count = Subscription::where('store_id', $store_id)
             ->count();
+        
+        // $is_user_subscribed = Subscription::where('store_id', $store_id)
+        //     ->where('user_id', auth()->id())
+        //     ->count();
 
         $store->subscription_count = $subscription_count;
+        $store->is_user_subscribed = 0;
 
         return [
             'store' => $store
