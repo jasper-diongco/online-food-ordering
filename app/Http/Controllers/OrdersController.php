@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Rating;
 use App\Notifications\OrderStatusUpdateNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,8 @@ use Kutia\Larafirebase\Facades\Larafirebase;
 
 class OrdersController extends Controller
 {
-    public function indexOfVendor(Request $request) {
+    public function indexOfVendor(Request $request)
+    {
         $store_id = $request->store_id ?? '';
 
         $orders = Order::where('store_id', $store_id)
@@ -23,12 +25,19 @@ class OrdersController extends Controller
             ->with('store')
             ->get();
 
+        foreach ($orders as $order) {
+            $rating = Rating::where('order_id', $order->id)->first();
+
+            $order->has_rating = $rating != null;
+        }
+
         return [
             'orders' => $orders
         ];
     }
 
-    public function indexOfCustomer(Request $request) {
+    public function indexOfCustomer(Request $request)
+    {
         $user_id = $request->user_id ?? '';
 
         $orders = Order::where('user_id', $user_id)
@@ -39,13 +48,20 @@ class OrdersController extends Controller
             // ->with('product')
             ->get();
 
+        foreach ($orders as $order) {
+            $rating = Rating::where('order_id', $order->id)->first();
+
+            $order->has_rating = $rating != null;
+        }
+
         return [
             'orders' => $orders
         ];
     }
 
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $request->validate([
             'user_id' => 'required',
             'store_id' => 'required',
@@ -68,7 +84,7 @@ class OrdersController extends Controller
 
         $cart_items = CartItem::where('user_id', $request->user_id)->get();
 
-        foreach($cart_items as $cart_item) {
+        foreach ($cart_items as $cart_item) {
             OrderDetail::create([
                 'order_id' => $order->id,
                 'product_id' => $cart_item->product_id,
@@ -88,7 +104,8 @@ class OrdersController extends Controller
         ];
     }
 
-    public function updateStatus(Request $request, $order_id) {
+    public function updateStatus(Request $request, $order_id)
+    {
         $order = Order::findOrFail($order_id);
 
         $order->status = $request->status;

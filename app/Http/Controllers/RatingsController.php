@@ -31,6 +31,7 @@ class RatingsController extends Controller
         $request->validate([
             'store_id' => 'required',
             'user_id' => 'required',
+            'order_id' => 'required',
             'comment' => 'required',
             'rate' => 'required',
         ]);
@@ -44,8 +45,6 @@ class RatingsController extends Controller
 
     public function update(Request $request, $rating_id) {
         $request->validate([
-            'store_id' => 'required',
-            'user_id' => 'required',
             'comment' => 'required',
             'rate' => 'required',
         ]);
