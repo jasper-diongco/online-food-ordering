@@ -42,8 +42,8 @@ Route::put('/users/update_walk_through', [UsersController::class, 'updateWalkThr
 Route::get('/users/send_notification', [UsersController::class, 'sendNotification']);
 Route::get('/users/{user_id}', [UsersController::class, 'show']);
 
-Route::post('/stores', [StoreController::class, 'store']);
 Route::post('/stores/{store_id}', [StoreController::class, 'update']);
+Route::post('/stores', [StoreController::class, 'store']);
 Route::put('/stores/{store_id}/update_location', [StoreController::class, 'updateLocation']);
 Route::get('/stores/by_user_id/{user_id}', [StoreController::class, 'showByUserId']);
 Route::get('/stores/{store_id}', [StoreController::class, 'show']);
@@ -55,8 +55,8 @@ Route::get('/categories/{category_id}', [CategoriesController::class, 'show']);
 Route::get('/categories', [CategoriesController::class, 'index']);
 Route::delete('/categories/{category_id}', [CategoriesController::class, 'destroy']);
 
+Route::post('/products/{product_id}', [ProductsController::class, 'update']);
 Route::post('/products', [ProductsController::class, 'store']);
-Route::put('/products/{product_id}', [ProductsController::class, 'update']);
 Route::get('/products/search', [ProductsController::class, 'index']);
 Route::get('/products/per_category', [ProductsController::class, 'indexPerCategory']);
 Route::get('/products/per_store', [ProductsController::class, 'indexPerStore']);
@@ -86,6 +86,7 @@ Route::put('/cart_items/{cart_item_id}', [CartItemsController::class, 'update'])
 Route::get('/cart_items', [CartItemsController::class, 'index']);
 Route::delete('/cart_items/{cart_item_id}', [CartItemsController::class, 'destroy']);
 Route::delete('/cart_items/delete_all/{store_id}', [CartItemsController::class, 'deleteAll']);
+
 
 Route::post('/orders', [OrdersController::class, 'store']);
 Route::get('/orders/vendor', [OrdersController::class, 'indexOfVendor']);
