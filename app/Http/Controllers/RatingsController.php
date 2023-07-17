@@ -12,6 +12,7 @@ class RatingsController extends Controller
 
         $ratings = Rating::where('store_id', $store_id)
             ->orderBy('created_at', 'DESC')
+            ->with('user')
             ->get();
 
         return [

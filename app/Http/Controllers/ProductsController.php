@@ -127,7 +127,6 @@ class ProductsController extends Controller
             'description' => 'required',
             'price' => 'required',
             'category_id' => 'required',
-            'store_id' => 'required'
         ]);
 
         $image_name = '';
