@@ -38,6 +38,7 @@ Route::post('/update/{id}/update_password', [AuthController::class, 'updatePassw
 Route::post('/users/upload_image', [UsersController::class, 'uploadImage'])->middleware(['auth:sanctum']);
 Route::put('/users/update_location', [UsersController::class, 'updateLocation'])->middleware(['auth:sanctum']);
 Route::put('/users/update_fcm_token', [UsersController::class, 'updateFcmToken'])->middleware(['auth:sanctum']);
+Route::put('/users/update_walk_through', [UsersController::class, 'updateWalkThrough'])->middleware(['auth:sanctum']);
 Route::get('/users/send_notification', [UsersController::class, 'sendNotification']);
 Route::get('/users/{user_id}', [UsersController::class, 'show']);
 

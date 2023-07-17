@@ -66,6 +66,12 @@ class StoreController extends Controller
     {
         $store = Store::where('user_id', $user_id)->with('schedules')->first();
 
+        $subscription_count = Subscription::where('store_id', $store->id)
+            ->count();
+
+        $store->subscription_count = $subscription_count;
+        $store->is_user_subscribed = 0;
+
         return [
             'store' => $store
         ];
@@ -133,9 +139,16 @@ class StoreController extends Controller
 
         $store = Store::findOrFail($store_id);
 
+        if ($request->hasFile('image')) {
+            $store->update([
+                ...$request->all(),
+                'image' => $image_name,
+                'is_active' => 1
+            ]);
+        }
+
         $store->update([
             ...$request->all(),
-            'image' => $image_name,
             'is_active' => 1
         ]);
 

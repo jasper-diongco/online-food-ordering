@@ -26,7 +26,8 @@ class User extends Authenticatable
         'fcm_token',
         'longitude',
         'latitude',
-        'user_type'
+        'user_type',
+        'walk_through'
     ];
 
     /**

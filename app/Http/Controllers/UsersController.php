@@ -52,6 +52,15 @@ class UsersController extends Controller
         ];
     }
 
+    public function updateWalkThrough(Request $request)
+    {
+        $request->user()->update(['walk_through' => true]);
+
+        return [
+            'message' => 'Walk Through Updated'
+        ];
+    }
+
     public function updateLocation(Request $request)
     {
         $request->validate([
