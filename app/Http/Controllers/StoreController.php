@@ -49,12 +49,12 @@ class StoreController extends Controller
         $subscription_count = Subscription::where('store_id', $store_id)
             ->count();
         
-        // $is_user_subscribed = Subscription::where('store_id', $store_id)
-        //     ->where('user_id', auth()->id())
-        //     ->count();
+        $is_user_subscribed = Subscription::where('store_id', $store_id)
+            ->where('user_id', auth()->id())
+            ->count();
 
         $store->subscription_count = $subscription_count;
-        $store->is_user_subscribed = 0;
+        $store->is_user_subscribed = $is_user_subscribed;
 
         return [
             'store' => $store
@@ -152,9 +152,33 @@ class StoreController extends Controller
             'is_active' => 1
         ]);
 
+
+        $this->notifySubscribers($store);
+
         return [
             'store' => $store
         ];
+    }
+
+    public function notifySubscribers($store) {
+        $fcm_tokens = [];
+        $subscribers = [];
+
+        foreach ($store->subscribers as $subscriber) {
+            if (!$subscriber->latitude) {
+                continue;
+            }
+            $distance = CoordinateHelper::computeDistance($store->latitude, $store->longitude, $subscriber->latitude, $subscriber->longitude, "K");
+
+            if ($distance <= 2) {
+                $fcm_tokens[] = $subscriber->fcm_token;
+                $subscribers[] = $subscriber;
+            }
+        }
+
+        Larafirebase::withTitle('Lalaco')
+            ->withBody($store->store_name . ' is nearby. Check the menu and order now!')
+            ->sendNotification($fcm_tokens);
     }
 
     public function updateLocation(Request $request, $store_id)
@@ -187,7 +211,7 @@ class StoreController extends Controller
         }
 
         Larafirebase::withTitle('Lalaco')
-            ->withBody($store->store_name . ' is nearby. Check the menu and enjoy eating! 👌')
+            ->withBody($store->store_name . ' is nearby. Check the their menu!')
             ->sendNotification($fcm_tokens);
 
 

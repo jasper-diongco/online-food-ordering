@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Subscription;
+use App\Models\User;
+use App\Notifications\NewSubscriberNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class SubscriptionsController extends Controller
 {
@@ -59,7 +62,12 @@ class SubscriptionsController extends Controller
             abort(422, 'Already Subscribed');
         }
 
+
         $subscription = Subscription::create($request->all());
+
+        $store_owner = User::where('id', $subscription->store->user_id)->first();
+
+        Notification::sendNow([$store_owner], new NewSubscriberNotification($subscription));
 
         return [
             'subscription' => $subscription

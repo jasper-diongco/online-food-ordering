@@ -4,7 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\Store;
+use App\Models\Subscription;
+use App\Notifications\NewProductNotification;
+use App\Notifications\UpdateProductNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Intervention\Image\Facades\Image;
 
 class ProductsController extends Controller
@@ -115,6 +120,18 @@ class ProductsController extends Controller
             ...$request->all(),
             'image' => $image_name
         ]);
+        
+        //notification
+        $user_subscribers = [];
+
+        $subscribers = Subscription::where('store_id', $request->store_id)->get();
+
+        foreach ($subscribers as $subscriber) {
+            $user_subscribers[] = $subscriber->user;
+        }
+
+
+        Notification::sendNow($user_subscribers, new NewProductNotification($product));
 
         return [
             'product' => $product
@@ -150,6 +167,18 @@ class ProductsController extends Controller
             ...$request->all(),
             'image' => $image_name
         ]);
+
+        //notification
+        $user_subscribers = [];
+
+        $subscribers = Subscription::where('store_id', $product->store_id)->get();
+
+        foreach ($subscribers as $subscriber) {
+            $user_subscribers[] = $subscriber->user;
+        }
+
+
+        Notification::sendNow($user_subscribers, new UpdateProductNotification($product));
 
         return [
             'product' => $product
