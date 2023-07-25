@@ -6,21 +6,38 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Store;
 use App\Models\Subscription;
+use App\Models\User;
 use App\Notifications\NewProductNotification;
 use App\Notifications\UpdateProductNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 use Intervention\Image\Facades\Image;
+use Kutia\Larafirebase\Facades\Larafirebase;
 
 class ProductsController extends Controller
 {
     public function index(Request $request) {
         $search = $request->search ?? '';
+        $user_id = $request->user_id ?? 0;
 
-        $products = Product::where('name', 'LIKE', '%' . $search . '%')
-            ->with('category')
-            ->with('store')
-            ->get();
+        $user = User::find($user_id);
+
+        if ($user && $user->user_type == 'Vendor') {
+            $store = Store::where('user_id', $user_id)->first();
+            
+            $products = Product::where('name', 'LIKE', '%' . $search . '%')
+                ->where('store_id', $store->id)
+                ->with('category')
+                ->with('store')
+                ->get();
+        } else {
+            $products = Product::where('name', 'LIKE', '%' . $search . '%')
+                ->with('category')
+                ->with('store')
+                ->get();
+        }
+
+        
 
         return [
             'products' => $products
@@ -133,6 +150,8 @@ class ProductsController extends Controller
 
         Notification::sendNow($user_subscribers, new NewProductNotification($product));
 
+        $this->notifySubscribers($product->store_id, 'We have a new product. It\'s ' . $product->name . ' and for only ' . $product->price . ' pesos.');
+
         return [
             'product' => $product
         ];
@@ -180,9 +199,29 @@ class ProductsController extends Controller
 
         Notification::sendNow($user_subscribers, new UpdateProductNotification($product));
 
+        $this->notifySubscribers($product->store_id, 'We have updated our product ' . $product->name);
+
         return [
             'product' => $product
         ];
+    }
+
+    public function notifySubscribers($store_id, $body) {
+        $store = Store::find($store_id);
+
+        $fcm_tokens = [];
+
+        foreach ($store->subscribers as $subscriber) {
+            if (!$subscriber->fcm_token) {
+                continue;
+            }
+
+            $fcm_tokens[] = $subscriber->fcm_token;
+        }
+
+        Larafirebase::withTitle('Lalaco')
+            ->withBody($store->store_name . ' - ' . $body)
+            ->sendNotification($fcm_tokens);
     }
 
     public function destroy($product_id) {

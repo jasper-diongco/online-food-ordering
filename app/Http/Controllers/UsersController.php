@@ -41,9 +41,9 @@ class UsersController extends Controller
 
     public function updateFcmToken(Request $request)
     {
-        $request->validate([
-            'fcm_token' => 'required'
-        ]);
+        // $request->validate([
+        //     'fcm_token' => 'required'
+        // ]);
 
         $request->user()->update(['fcm_token' => $request->fcm_token]);
 

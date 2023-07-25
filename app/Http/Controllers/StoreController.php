@@ -40,8 +40,10 @@ class StoreController extends Controller
         ];
     }
 
-    public function show($store_id)
+    public function show(Request $request, $store_id)
     {
+        $user_id = $request->user_id ?? '';
+
         $store = Store::where('id', $store_id)
             ->with('schedules')
             ->first();
@@ -50,7 +52,7 @@ class StoreController extends Controller
             ->count();
         
         $is_user_subscribed = Subscription::where('store_id', $store_id)
-            ->where('user_id', auth()->id())
+            ->where('user_id', $user_id)
             ->count();
 
         $store->subscription_count = $subscription_count;
@@ -165,9 +167,10 @@ class StoreController extends Controller
         $subscribers = [];
 
         foreach ($store->subscribers as $subscriber) {
-            if (!$subscriber->latitude) {
+            if (!$subscriber->latitude || !$subscriber->fcm_token) {
                 continue;
             }
+
             $distance = CoordinateHelper::computeDistance($store->latitude, $store->longitude, $subscriber->latitude, $subscriber->longitude, "K");
 
             if ($distance <= 2) {
@@ -199,7 +202,7 @@ class StoreController extends Controller
         $subscribers = [];
 
         foreach ($store->subscribers as $subscriber) {
-            if (!$subscriber->latitude) {
+            if (!$subscriber->latitude || !$subscriber->fcm_token) {
                 continue;
             }
             $distance = CoordinateHelper::computeDistance($store->latitude, $store->longitude, $subscriber->latitude, $subscriber->longitude, "K");

@@ -6,6 +6,8 @@ use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Rating;
+use App\Models\User;
+use App\Notifications\NewOrderNotification;
 use App\Notifications\OrderStatusUpdateNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -95,7 +97,20 @@ class OrdersController extends Controller
             $cart_item->delete();
         }
 
-        DB::commit();
+        // DB::commit();
+
+        $store_owner = User::find($order->store->user_id);
+
+        Notification::sendNow([$store_owner], new NewOrderNotification($order));
+
+        if ($store_owner->fcm_token) {
+            Larafirebase::withTitle('You have a new order')
+                ->withBody($order->user->name . ' placed a new order.')
+                ->sendNotification([
+                    $store_owner->fcm_token
+                ]);
+        }
+        
 
         $order->load('order_details');
 
@@ -111,11 +126,14 @@ class OrdersController extends Controller
         $order->status = $request->status;
         $order->update();
 
-        Larafirebase::withTitle($order->store->store_name)
-            ->withBody('Your order is now ' . $order->status)
-            ->sendNotification([
-                $order->user->fcm_token
-            ]);
+        if ($order->user->fcm_token) {
+            Larafirebase::withTitle($order->store->store_name)
+                ->withBody('Your order is now ' . $order->status)
+                ->sendNotification([
+                    $order->user->fcm_token
+                ]);
+        }
+        
 
         Notification::sendNow([$order->user], new OrderStatusUpdateNotification($order));
 
