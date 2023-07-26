@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Store;
 use App\Models\Subscription;
+use App\Models\User;
 use App\Utils\CoordinateHelper;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
@@ -16,10 +17,29 @@ class StoreController extends Controller
         $search = $request->search ?? '';
         $user_id = $request->user_id ?? '';
 
+        $user = User::find($user_id);
+
+
         if ($search !== '') {
-            $stores = Store::where('store_name', 'LIKE', '%' . $search . '%')->where('is_active', 1)->with('schedules')->get();
+            if ($user && $user->user_type == 'Vendor') {
+                $stores = Store::where('store_name', 'LIKE', '%' . $search . '%')
+                ->where('is_active', 1)
+                ->where('user_id', $user->id)
+                ->with('schedules')
+                ->get();
+            } else {
+                $stores = Store::where('store_name', 'LIKE', '%' . $search . '%')->where('is_active', 1)->with('schedules')->get();
+            }
+            
         } else {
-            $stores = Store::where('is_active', 1)->with('schedules')->get();
+            if ($user && $user->user_type == 'Vendor') {
+                $stores = Store::where('is_active', 1)
+                    ->where('user_id', $user->id)
+                    ->with('schedules')
+                    ->get();
+            } else {
+                $stores = Store::where('is_active', 1)->with('schedules')->get();
+            }
         }
 
         foreach ($stores as $store) {
