@@ -181,11 +181,18 @@ class ProductsController extends Controller
         }
 
         $product = Product::findOrFail($product_id);
-
-        $product->update([
-            ...$request->all(),
-            'image' => $image_name
-        ]);
+        
+        if ($request->hasFile('image')) {
+            $product->update([
+                ...$request->all(),
+                'image' => $image_name
+            ]);
+        } else {
+            $product->update([
+                ...$request->all()
+            ]);
+        }
+        
 
         //notification
         $user_subscribers = [];
