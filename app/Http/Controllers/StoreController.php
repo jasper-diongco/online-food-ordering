@@ -167,12 +167,14 @@ class StoreController extends Controller
                 'image' => $image_name,
                 'is_active' => 1
             ]);
+        } else {
+            $store->update([
+                ...$request->all(),
+                'is_active' => 1
+            ]);
         }
 
-        $store->update([
-            ...$request->all(),
-            'is_active' => 1
-        ]);
+        
 
 
         $this->notifySubscribers($store);
