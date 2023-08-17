@@ -72,7 +72,8 @@ class OrdersController extends Controller
             'longitude' => 'required',
             'latitude' => 'required',
             'type' => 'required',
-            'status' => 'required'
+            'status' => 'required',
+            'payment_method' => 'required',
         ]);
 
         $note = $request->note ?? '';
