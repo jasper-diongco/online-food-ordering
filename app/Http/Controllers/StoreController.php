@@ -23,14 +23,13 @@ class StoreController extends Controller
         if ($search !== '') {
             if ($user && $user->user_type == 'Vendor') {
                 $stores = Store::where('store_name', 'LIKE', '%' . $search . '%')
-                ->where('is_active', 1)
-                ->where('user_id', $user->id)
-                ->with('schedules')
-                ->get();
+                    ->where('is_active', 1)
+                    ->where('user_id', $user->id)
+                    ->with('schedules')
+                    ->get();
             } else {
                 $stores = Store::where('store_name', 'LIKE', '%' . $search . '%')->where('is_active', 1)->with('schedules')->get();
             }
-            
         } else {
             if ($user && $user->user_type == 'Vendor') {
                 $stores = Store::where('is_active', 1)
@@ -45,7 +44,7 @@ class StoreController extends Controller
         foreach ($stores as $store) {
             $subscription_count = Subscription::where('store_id', $store->id)
                 ->count();
-            
+
             $is_user_subscribed = Subscription::where('store_id', $store->id)
                 ->where('user_id', $user_id)
                 ->count();
@@ -70,7 +69,7 @@ class StoreController extends Controller
 
         $subscription_count = Subscription::where('store_id', $store_id)
             ->count();
-        
+
         $is_user_subscribed = Subscription::where('store_id', $store_id)
             ->where('user_id', $user_id)
             ->count();
@@ -174,7 +173,7 @@ class StoreController extends Controller
             ]);
         }
 
-        
+
 
 
         $this->notifySubscribers($store);
@@ -184,7 +183,8 @@ class StoreController extends Controller
         ];
     }
 
-    public function notifySubscribers($store) {
+    public function notifySubscribers($store)
+    {
         $fcm_tokens = [];
         $subscribers = [];
 
@@ -244,6 +244,18 @@ class StoreController extends Controller
         return [
             'store' => $store,
             'subscribers' => $subscribers
+        ];
+    }
+
+    public function destroy($store_id)
+    {
+
+        $store = Store::findOrFail($store_id);
+
+        $store->delete();
+
+        return [
+            'message' => 'Store Deleted'
         ];
     }
 }

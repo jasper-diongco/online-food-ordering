@@ -16,7 +16,8 @@ use Kutia\Larafirebase\Facades\Larafirebase;
 
 class ProductsController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $search = $request->search ?? '';
         $user_id = $request->user_id ?? 0;
 
@@ -24,7 +25,7 @@ class ProductsController extends Controller
 
         if ($user && $user->user_type == 'Vendor') {
             $store = Store::where('user_id', $user_id)->first();
-            
+
             $products = Product::where('name', 'LIKE', '%' . $search . '%')
                 ->where('store_id', $store->id)
                 ->with('category')
@@ -37,14 +38,15 @@ class ProductsController extends Controller
                 ->get();
         }
 
-        
+
 
         return [
             'products' => $products
         ];
     }
 
-    public function indexPerCategory(Request $request) {
+    public function indexPerCategory(Request $request)
+    {
         $category_id = $request->category_id ?? '';
 
         $products = Product::where('category_id', $category_id)
@@ -57,7 +59,8 @@ class ProductsController extends Controller
         ];
     }
 
-    public function indexPerStore(Request $request) {
+    public function indexPerStore(Request $request)
+    {
         $store_id = $request->store_id ?? '';
 
         $products = Product::where('store_id', $store_id)
@@ -70,7 +73,8 @@ class ProductsController extends Controller
         ];
     }
 
-    public function groupByCategory(Request $request) {
+    public function groupByCategory(Request $request)
+    {
         $store_id = $request->store_id ?? '';
 
         $categories = ProductCategory::select('product_categories.*')->distinct()->join('products', 'products.category_id', '=', 'product_categories.id')
@@ -98,7 +102,8 @@ class ProductsController extends Controller
         ];
     }
 
-    public function show($product_id) {
+    public function show($product_id)
+    {
         $product = Product::where('id', $product_id)
             ->with('category')
             ->with('store')
@@ -109,7 +114,8 @@ class ProductsController extends Controller
         ];
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $request->validate([
             'name' => 'required',
             'description' => 'required',
@@ -128,16 +134,16 @@ class ProductsController extends Controller
             $image_name = uniqid() . '_' . pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
             $image = Image::make($request->image);
             $image->fit(1200, 1200);
-            $image->save(public_path('storage/uploads/'. $image_name .'.png'), 90, 'png');
-            
-            $image_name = $image_name .'.png';
+            $image->save(public_path('storage/uploads/' . $image_name . '.png'), 90, 'png');
+
+            $image_name = $image_name . '.png';
         }
 
         $product = Product::create([
             ...$request->all(),
             'image' => $image_name
         ]);
-        
+
         //notification
         $user_subscribers = [];
 
@@ -157,7 +163,8 @@ class ProductsController extends Controller
         ];
     }
 
-    public function update(Request $request, $product_id) {
+    public function update(Request $request, $product_id)
+    {
         $request->validate([
             'name' => 'required',
             'description' => 'required',
@@ -175,13 +182,13 @@ class ProductsController extends Controller
             $image_name = uniqid() . '_' . pathinfo($request->image->getClientOriginalName(), PATHINFO_FILENAME);
             $image = Image::make($request->image);
             $image->fit(1200, 1200);
-            $image->save(public_path('storage/uploads/'. $image_name .'.png'), 90, 'png');
-            
-            $image_name = $image_name .'.png';
+            $image->save(public_path('storage/uploads/' . $image_name . '.png'), 90, 'png');
+
+            $image_name = $image_name . '.png';
         }
 
         $product = Product::findOrFail($product_id);
-        
+
         if ($request->hasFile('image')) {
             $product->update([
                 ...$request->all(),
@@ -192,7 +199,7 @@ class ProductsController extends Controller
                 ...$request->all()
             ]);
         }
-        
+
 
         //notification
         $user_subscribers = [];
@@ -213,7 +220,8 @@ class ProductsController extends Controller
         ];
     }
 
-    public function notifySubscribers($store_id, $body) {
+    public function notifySubscribers($store_id, $body)
+    {
         $store = Store::find($store_id);
 
         $fcm_tokens = [];
@@ -231,7 +239,8 @@ class ProductsController extends Controller
             ->sendNotification($fcm_tokens);
     }
 
-    public function destroy($product_id) {
+    public function destroy($product_id)
+    {
 
         $product = Product::findOrFail($product_id);
 
@@ -239,6 +248,18 @@ class ProductsController extends Controller
 
         return [
             'message' => 'Product Deleted'
+        ];
+    }
+
+    public function deleteProductsPerStore(Request $request)
+    {
+        $store_id = $request->store_id ?? '';
+
+        // Delete products with the given store_id
+        Product::where('store_id', $store_id)->delete();
+
+        return [
+            'message' => 'Products deleted successfully'
         ];
     }
 }

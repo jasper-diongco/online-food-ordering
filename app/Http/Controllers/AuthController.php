@@ -18,7 +18,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
             'user_type' => 'required'
         ]);
-    
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -26,7 +26,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'user_type' => $request->user_type
         ]);
-    
+
         if ($request->user_type === 'Vendor') {
             Store::create([
                 'store_name' => '',
@@ -38,16 +38,16 @@ class AuthController extends Controller
                 'user_id' => $user->id, // Use the ID of the created user
             ]);
         }
-    
+
         // $token = $user->createToken('app_token')->plainTextToken;
-    
+
         $response = [
             'user' => $user
         ];
-    
+
         return response($response, 201);
     }
-    
+
 
     public function login(Request $request)
     {
@@ -113,6 +113,19 @@ class AuthController extends Controller
 
         return [
             'message' => 'Logged out'
+        ];
+    }
+
+
+    public function destroy($user_id)
+    {
+
+        $user = User::findOrFail($user_id);
+
+        $user->delete();
+
+        return [
+            'message' => 'User Deleted'
         ];
     }
 }

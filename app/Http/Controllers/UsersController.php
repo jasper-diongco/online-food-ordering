@@ -9,7 +9,8 @@ use Intervention\Image\Facades\Image;
 
 class UsersController extends Controller
 {
-    public function show($user_id) {
+    public function show($user_id)
+    {
         $user = User::findOrFail($user_id);
 
         return [
@@ -85,5 +86,17 @@ class UsersController extends Controller
             ->sendNotification([
                 'd9kD_VwcSiSowN-iIGPMix:APA91bEdwoto3l5cO50fbIXYK_WTgu2GjCxx6rR3C3_Y9f_gjOCdJ7F6gqdzfwLQoMwqHK5bPOGEYpXgug0sRsJqcNnFHW3Dac352OYot3JCBOq-R7tWtIZFJA_HMg8bCoxLYkxOe7LP'
             ]);
+    }
+
+    public function destroy($user_id)
+    {
+
+        $user = User::findOrFail($user_id);
+
+        $user->delete();
+
+        return [
+            'message' => 'User Deleted'
+        ];
     }
 }

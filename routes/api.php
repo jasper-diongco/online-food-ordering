@@ -40,6 +40,7 @@ Route::put('/users/update_location', [UsersController::class, 'updateLocation'])
 Route::put('/users/update_fcm_token', [UsersController::class, 'updateFcmToken'])->middleware(['auth:sanctum']);
 Route::put('/users/update_walk_through', [UsersController::class, 'updateWalkThrough'])->middleware(['auth:sanctum']);
 Route::get('/users/send_notification', [UsersController::class, 'sendNotification']);
+Route::delete('/users/{user_id}', [UsersController::class, 'destroy']);
 Route::get('/users/{user_id}', [UsersController::class, 'show']);
 
 Route::post('/stores/{store_id}', [StoreController::class, 'update']);
@@ -48,6 +49,8 @@ Route::put('/stores/{store_id}/update_location', [StoreController::class, 'updat
 Route::get('/stores/by_user_id/{user_id}', [StoreController::class, 'showByUserId']);
 Route::get('/stores/{store_id}', [StoreController::class, 'show']);
 Route::get('/stores', [StoreController::class, 'index']);
+Route::delete('/stores/{store_id}', [StoreController::class, 'destroy']);
+
 
 Route::post('/categories', [CategoriesController::class, 'store']);
 Route::put('/categories/{category_id}', [CategoriesController::class, 'update']);
@@ -60,6 +63,7 @@ Route::post('/products', [ProductsController::class, 'store']);
 Route::get('/products/search', [ProductsController::class, 'index']);
 Route::get('/products/per_category', [ProductsController::class, 'indexPerCategory']);
 Route::get('/products/per_store', [ProductsController::class, 'indexPerStore']);
+Route::delete('/products/per_store/{store_id}', [ProductsController::class, 'deleteProductsPerStore']);
 Route::get('/products/group_by_category', [ProductsController::class, 'groupByCategory']);
 Route::get('/products/{product_id}', [ProductsController::class, 'show']);
 Route::delete('/products/{product_id}', [ProductsController::class, 'destroy']);
